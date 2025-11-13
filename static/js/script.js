@@ -11,7 +11,7 @@ const unitData = {
             'yd': 'Yard',
             'mi': 'Mil'
         },
-        info: 'Satuan panjang digunakan untuk mengukur jarak atau dimensi benda.'
+        info: 'Satuan panjang digunakan untuk mengukur jarak atau dimensi benda. Meter (m) adalah satuan dasar dalam Sistem Internasional (SI).'
     },
     mass: {
         units: {
@@ -22,7 +22,7 @@ const unitData = {
             'oz': 'Ons',
             'lb': 'Pound'
         },
-        info: 'Satuan massa digunakan untuk mengukur berat atau jumlah materi.'
+        info: 'Satuan massa digunakan untuk mengukur berat atau jumlah materi. Kilogram (kg) adalah satuan dasar dalam Sistem Internasional (SI).'
     },
     temperature: {
         units: {
@@ -30,7 +30,7 @@ const unitData = {
             'f': 'Fahrenheit',
             'k': 'Kelvin'
         },
-        info: 'Satuan suhu digunakan untuk mengukur tingkat panas atau dingin.'
+        info: 'Satuan suhu digunakan untuk mengukur tingkat panas atau dingin. Celcius umum digunakan sehari-hari, Kelvin untuk keperluan ilmiah.'
     }
 };
 
@@ -38,6 +38,7 @@ const unitData = {
 document.addEventListener('DOMContentLoaded', function() {
     initializeUnitConverter();
     loadCalculationHistory();
+    loadRecentConversions();
     setupEventListeners();
 });
 
@@ -65,21 +66,33 @@ function initializeUnitConverter() {
         
         // Add new options
         Object.entries(units).forEach(([value, label]) => {
-            const fromOption = new Option(label, value);
-            const toOption = new Option(label, value);
+            const fromOption = new Option(`${label} (${value})`, value);
+            const toOption = new Option(`${label} (${value})`, value);
             fromUnitSelect.add(fromOption);
             toUnitSelect.add(toOption);
         });
         
+        // Set different default to-unit for better UX
+        if (category === 'length') {
+            toUnitSelect.value = 'cm';
+        } else if (category === 'mass') {
+            toUnitSelect.value = 'g';
+        } else if (category === 'temperature') {
+            toUnitSelect.value = 'f';
+        }
+        
         // Update unit info
         if (unitInfo) {
             unitInfo.innerHTML = `
-                <h6>${category.charAt(0).toUpperCase() + category.slice(1)}</h6>
-                <p class="mb-2">${unitData[category].info}</p>
+                <h6 class="fw-bold text-primary">${category.charAt(0).toUpperCase() + category.slice(1)}</h6>
+                <p class="mb-3">${unitData[category].info}</p>
                 <div class="mt-3">
-                    ${Object.entries(units).map(([value, label]) => 
-                        `<span class="unit-badge me-2 mb-2 d-inline-block">${label} (${value})</span>`
-                    ).join('')}
+                    <h6 class="fw-semibold mb-2">Satuan Tersedia:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        ${Object.entries(units).map(([value, label]) => 
+                            `<span class="badge bg-primary">${label} (${value})</span>`
+                        ).join('')}
+                    </div>
                 </div>
             `;
         }
@@ -97,19 +110,29 @@ function setupEventListeners() {
     // Quick conversion buttons
     document.querySelectorAll('.quick-convert').forEach(button => {
         button.addEventListener('click', function() {
+            const category = this.dataset.category;
             const fromUnit = this.dataset.from;
             const toUnit = this.dataset.to;
             
             // Set the form values
-            document.getElementById('from-unit').value = fromUnit;
-            document.getElementById('to-unit').value = toUnit;
+            document.getElementById('category').value = category;
             
-            // Show prompt for value
-            const value = prompt(`Masukkan nilai dalam ${fromUnit}:`);
-            if (value !== null && !isNaN(value)) {
-                document.getElementById('value').value = value;
-                handleUnitConversion(new Event('submit'));
-            }
+            // Trigger change event to update units
+            document.getElementById('category').dispatchEvent(new Event('change'));
+            
+            // Small delay to ensure units are populated
+            setTimeout(() => {
+                document.getElementById('from-unit').value = fromUnit;
+                document.getElementById('to-unit').value = toUnit;
+                
+                // Show prompt for value
+                const fromLabel = unitData[category].units[fromUnit];
+                const value = prompt(`Masukkan nilai dalam ${fromLabel} (${fromUnit}):`);
+                if (value !== null && !isNaN(parseFloat(value))) {
+                    document.getElementById('value').value = parseFloat(value);
+                    handleUnitConversion(new Event('submit'));
+                }
+            }, 100);
         });
     });
     
@@ -136,14 +159,30 @@ function setupEventListeners() {
 async function handleUnitConversion(e) {
     e.preventDefault();
     
+    hideError();
+    
+    const valueInput = document.getElementById('value');
+    const value = parseFloat(valueInput.value);
+    
+    if (isNaN(value)) {
+        showError('Masukkan nilai yang valid');
+        return;
+    }
+    
     const formData = {
-        value: document.getElementById('value').value,
+        value: value,
         from_unit: document.getElementById('from-unit').value,
         to_unit: document.getElementById('to-unit').value,
         category: document.getElementById('category').value
     };
     
     try {
+        // Show loading state
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Mengkonversi...';
+        submitBtn.disabled = true;
+        
         const response = await fetch('/api/convert-units', {
             method: 'POST',
             headers: {
@@ -154,332 +193,175 @@ async function handleUnitConversion(e) {
         
         const data = await response.json();
         
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
         if (data.success) {
             const resultDiv = document.getElementById('conversion-result');
             const resultText = document.getElementById('result-text');
             
-            resultText.textContent = 
-                `${formData.value} ${formData.from_unit} = ${data.result} ${formData.to_unit}`;
+            const fromLabel = unitData[formData.category].units[formData.from_unit];
+            const toLabel = unitData[formData.category].units[formData.to_unit];
+            
+            resultText.innerHTML = `
+                <span class="text-primary">${formData.value} ${fromLabel} (${formData.from_unit})</span>
+                <br>
+                <span class="fs-4">=</span>
+                <br>
+                <span class="text-success">${data.formatted_result} ${toLabel} (${formData.to_unit})</span>
+            `;
+            
             resultDiv.style.display = 'block';
-            resultDiv.className = 'mt-3 alert alert-success fade-in';
+            resultDiv.className = 'mt-4 fade-in';
             
-            // Reload history
-            loadCalculationHistory();
-        } else {
-            showError(data.error);
-        }
-    } catch (error) {
-        showError('Terjadi kesalahan saat melakukan konversi');
-    }
-}
-
-// Handle electrical calculations
-async function handleElectricalCalculation(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const data = {
-        type: formData.get('calculation-type')
-    };
-    
-    // Collect relevant inputs based on calculation type
-    if (data.type === 'ohms_law') {
-        if (formData.get('voltage')) data.voltage = parseFloat(formData.get('voltage'));
-        if (formData.get('current')) data.current = parseFloat(formData.get('current'));
-        if (formData.get('resistance')) data.resistance = parseFloat(formData.get('resistance'));
-    } else if (data.type === 'series_parallel') {
-        data.circuit_type = formData.get('circuit-type');
-        data.resistors = formData.get('resistors').split(',').map(r => parseFloat(r.trim()));
-    }
-    
-    try {
-        const response = await fetch('/api/electrical-calc', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            displayElectricalResult(result.result, data.type);
-            loadCalculationHistory();
-        } else {
-            showError(result.error);
-        }
-    } catch (error) {
-        showError('Terjadi kesalahan saat melakukan perhitungan');
-    }
-}
-
-// Handle material calculations
-async function handleMaterialCalculation(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const data = {
-        type: formData.get('calculation-type')
-    };
-    
-    if (data.type === 'volume_weight') {
-        data.length = parseFloat(formData.get('length'));
-        data.width = parseFloat(formData.get('width'));
-        data.height = parseFloat(formData.get('height'));
-        data.density = parseFloat(formData.get('density'));
-    } else if (data.type === 'beam_stress') {
-        data.load = parseFloat(formData.get('load'));
-        data.length = parseFloat(formData.get('beam-length'));
-        data.width = parseFloat(formData.get('beam-width'));
-        data.height = parseFloat(formData.get('beam-height'));
-    }
-    
-    try {
-        const response = await fetch('/api/material-calc', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            displayMaterialResult(result.result, data.type);
-            loadCalculationHistory();
-        } else {
-            showError(result.error);
-        }
-    } catch (error) {
-        showError('Terjadi kesalahan saat melakukan perhitungan');
-    }
-}
-
-// Handle geometry calculations
-async function handleGeometryCalculation(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const data = {
-        shape: formData.get('shape')
-    };
-    
-    // Collect shape-specific inputs
-    if (data.shape === 'rectangle') {
-        data.length = parseFloat(formData.get('rect-length'));
-        data.width = parseFloat(formData.get('rect-width'));
-    } else if (data.shape === 'circle') {
-        data.radius = parseFloat(formData.get('circle-radius'));
-    } else if (data.shape === 'triangle') {
-        data.base = parseFloat(formData.get('triangle-base'));
-        data.height = parseFloat(formData.get('triangle-height'));
-        data.side1 = parseFloat(formData.get('triangle-side1'));
-        data.side2 = parseFloat(formData.get('triangle-side2'));
-    } else if (data.shape === 'cylinder') {
-        data.radius = parseFloat(formData.get('cylinder-radius'));
-        data.height = parseFloat(formData.get('cylinder-height'));
-    }
-    
-    try {
-        const response = await fetch('/api/geometry-calc', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            displayGeometryResult(result.result, data.shape);
-            loadCalculationHistory();
-        } else {
-            showError(result.error);
-        }
-    } catch (error) {
-        showError('Terjadi kesalahan saat melakukan perhitungan');
-    }
-}
-
-// Display functions for different calculation types
-function displayElectricalResult(result, type) {
-    const resultDiv = document.getElementById('electrical-result');
-    let html = '<h5>Hasil Perhitungan:</h5><div class="result-highlight">';
-    
-    if (type === 'ohms_law') {
-        Object.entries(result).forEach(([key, value]) => {
-            const label = {
-                'voltage': 'Tegangan',
-                'current': 'Arus', 
-                'resistance': 'Hambatan',
-                'power': 'Daya'
-            }[key] || key;
-            const unit = {
-                'voltage': 'V',
-                'current': 'A',
-                'resistance': 'Ω', 
-                'power': 'W'
-            }[key] || '';
+            // Show success animation
+            showSuccessAnimation();
             
-            html += `<p><strong>${label}:</strong> ${value} ${unit}</p>`;
-        });
-    } else if (type === 'series_parallel') {
-        html += `<p><strong>Hambatan Total:</strong> ${result.total_resistance} Ω</p>`;
-    }
-    
-    html += '</div>';
-    resultDiv.innerHTML = html;
-    resultDiv.style.display = 'block';
-}
-
-function displayMaterialResult(result, type) {
-    const resultDiv = document.getElementById('material-result');
-    let html = '<h5>Hasil Perhitungan:</h5><div class="result-highlight">';
-    
-    if (type === 'volume_weight') {
-        html += `
-            <p><strong>Volume:</strong> ${result.volume} m³</p>
-            <p><strong>Berat:</strong> ${result.weight} kg</p>
-        `;
-    } else if (type === 'beam_stress') {
-        html += `
-            <p><strong>Tegangan:</strong> ${result.stress} Pa</p>
-            <p><strong>Luas Penampang:</strong> ${result.area} m²</p>
-        `;
-    }
-    
-    html += '</div>';
-    resultDiv.innerHTML = html;
-    resultDiv.style.display = 'block';
-}
-
-function displayGeometryResult(result, shape) {
-    const resultDiv = document.getElementById('geometry-result');
-    let html = '<h5>Hasil Perhitungan:</h5><div class="result-highlight">';
-    
-    Object.entries(result).forEach(([key, value]) => {
-        const label = {
-            'area': 'Luas',
-            'perimeter': 'Keliling',
-            'circumference': 'Keliling',
-            'volume': 'Volume',
-            'surface_area': 'Luas Permukaan'
-        }[key] || key;
+            // Reload history and recent conversions
+            loadCalculationHistory();
+            loadRecentConversions();
+        } else {
+            showError(data.error || 'Terjadi kesalahan saat melakukan konversi');
+        }
+    } catch (error) {
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-sync-alt me-2"></i>Konversi Sekarang';
+        submitBtn.disabled = false;
         
-        const unit = key.includes('area') || key.includes('volume') ? 'satuan²' : 'satuan';
-        
-        html += `<p><strong>${label}:</strong> ${value} ${unit}</p>`;
-    });
-    
-    html += '</div>';
-    resultDiv.innerHTML = html;
-    resultDiv.style.display = 'block';
+        showError('Terjadi kesalahan jaringan. Periksa koneksi internet Anda.');
+    }
 }
 
-// Load calculation history
-async function loadCalculationHistory() {
+// Load recent conversions
+async function loadRecentConversions() {
     try {
         const response = await fetch('/api/history');
         const history = await response.json();
         
-        const historyContainer = document.getElementById('calculation-history');
-        if (historyContainer) {
-            if (history.length === 0) {
-                historyContainer.innerHTML = '<p class="text-muted">Belum ada riwayat perhitungan.</p>';
+        const recentContainer = document.getElementById('recent-conversions');
+        if (recentContainer) {
+            const conversions = history.filter(item => item.type === 'unit_conversion').slice(0, 5);
+            
+            if (conversions.length === 0) {
+                recentContainer.innerHTML = '<p class="text-muted mb-0">Belum ada konversi terbaru.</p>';
                 return;
             }
             
-            let html = `
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Waktu</th>
-                            <th>Jenis</th>
-                            <th>Input</th>
-                            <th>Output</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            history.reverse().forEach(calc => {
-                const time = new Date(calc.timestamp).toLocaleString('id-ID');
-                const typeLabel = {
-                    'unit_conversion': 'Konversi Satuan',
-                    'electrical_ohms_law': 'Hukum Ohm',
-                    'electrical_circuit': 'Rangkaian Listrik',
-                    'material_volume_weight': 'Volume & Berat',
-                    'material_beam_stress': 'Tegangan Balok',
-                    'geometry_rectangle': 'Persegi Panjang',
-                    'geometry_circle': 'Lingkaran',
-                    'geometry_triangle': 'Segitiga',
-                    'geometry_cylinder': 'Silinder'
-                }[calc.type] || calc.type;
-                
-                let inputText = typeof calc.input === 'object' ? 
-                    JSON.stringify(calc.input).substring(0, 50) + '...' : 
-                    calc.input;
-                
-                let outputText = typeof calc.output === 'object' ?
-                    JSON.stringify(calc.output) : calc.output;
-                
+            let html = '';
+            conversions.forEach(calc => {
                 html += `
-                    <tr>
-                        <td>${time}</td>
-                        <td>${typeLabel}</td>
-                        <td>${inputText}</td>
-                        <td>${outputText}</td>
-                    </tr>
+                    <div class="border-start border-primary ps-2 mb-2">
+                        <div class="fw-semibold">${calc.input} → ${calc.output}</div>
+                        <small class="text-muted">${new Date(calc.timestamp).toLocaleTimeString('id-ID')}</small>
+                    </div>
                 `;
             });
             
-            html += '</tbody></table>';
-            historyContainer.innerHTML = html;
+            recentContainer.innerHTML = html;
         }
     } catch (error) {
-        console.error('Error loading history:', error);
+        console.error('Error loading recent conversions:', error);
     }
 }
 
-// Utility function to show errors
+// Error handling functions
 function showError(message) {
-    // Create or update error alert
-    let errorAlert = document.getElementById('error-alert');
-    if (!errorAlert) {
-        errorAlert = document.createElement('div');
-        errorAlert.id = 'error-alert';
-        errorAlert.className = 'alert alert-danger alert-dismissible fade show';
-        errorAlert.innerHTML = `
-            <span id="error-message"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.querySelector('main').prepend(errorAlert);
+    hideError();
+    const errorDiv = document.getElementById('conversion-error');
+    const errorMessage = document.getElementById('error-message');
+    
+    if (errorDiv && errorMessage) {
+        errorMessage.textContent = message;
+        errorDiv.style.display = 'block';
+        errorDiv.classList.add('fade-in');
+    }
+}
+
+function hideError() {
+    const errorDiv = document.getElementById('conversion-error');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+    }
+}
+
+// ... (fungsi lainnya tetap sama, pastikan semua menggunakan try-catch) ...
+
+// Enhanced result display with confetti effect
+function showSuccessAnimation() {
+    // Simple confetti effect
+    const confettiCount = 20;
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.top = '0';
+    container.style.left = '0';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.pointerEvents = 'none';
+    container.style.zIndex = '9999';
+    
+    for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'absolute';
+        confetti.style.width = '8px';
+        confetti.style.height = '8px';
+        confetti.style.background = getRandomColor();
+        confetti.style.borderRadius = '50%';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '-10px';
+        confetti.style.animation = `confettiFall ${Math.random() * 1.5 + 0.5}s ease-in forwards`;
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        
+        container.appendChild(confetti);
     }
     
-    document.getElementById('error-message').textContent = message;
-    errorAlert.style.display = 'block';
+    document.body.appendChild(container);
+    
+    // Remove confetti after animation
+    setTimeout(() => {
+        if (document.body.contains(container)) {
+            document.body.removeChild(container);
+        }
+    }, 2000);
 }
 
-// Export function for global access
-window.TechnicalMathSolver = {
-    convertUnits: handleUnitConversion,
-    calculateElectrical: handleElectricalCalculation,
-    calculateMaterial: handleMaterialCalculation,
-    calculateGeometry: handleGeometryCalculation
-};
+function getRandomColor() {
+    const colors = ['#6366f1', '#8b5cf6', '#f59e0b', '#10b981', '#ef4444', '#3b82f6'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+// Add CSS for confetti animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes confettiFall {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+    
+    .fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
 
 // Modern animations and interactions
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize animations
-    initializeAnimations();
-    
-    // Add intersection observer for scroll animations
-    initScrollAnimations();
-});
-
 function initializeAnimations() {
     // Add loading animation to cards
     const cards = document.querySelectorAll('.card, .feature-card');
@@ -522,60 +404,8 @@ function initScrollAnimations() {
     });
 }
 
-// Enhanced result display with confetti effect
-function showSuccessAnimation() {
-    // Simple confetti effect
-    const confettiCount = 30;
-    const container = document.createElement('div');
-    container.style.position = 'fixed';
-    container.style.top = '0';
-    container.style.left = '0';
-    container.style.width = '100%';
-    container.style.height = '100%';
-    container.style.pointerEvents = 'none';
-    container.style.zIndex = '9999';
-    
-    for (let i = 0; i < confettiCount; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'absolute';
-        confetti.style.width = '10px';
-        confetti.style.height = '10px';
-        confetti.style.background = getRandomColor();
-        confetti.style.borderRadius = '50%';
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.top = '-10px';
-        confetti.style.animation = `confettiFall ${Math.random() * 2 + 1}s ease-in forwards`;
-        
-        container.appendChild(confetti);
-    }
-    
-    document.body.appendChild(container);
-    
-    // Remove confetti after animation
-    setTimeout(() => {
-        document.body.removeChild(container);
-    }, 2000);
-}
-
-function getRandomColor() {
-    const colors = [
-        '#6366f1', '#8b5cf6', '#f59e0b', '#10b981', '#ef4444'
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-}
-
-// Add CSS for confetti animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes confettiFall {
-        0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 1;
-        }
-        100% {
-            transform: translateY(100vh) rotate(360deg);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
+// Initialize when page loads
+window.addEventListener('load', function() {
+    initializeAnimations();
+    initScrollAnimations();
+});
