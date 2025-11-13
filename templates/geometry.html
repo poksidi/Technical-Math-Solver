@@ -1,0 +1,549 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section py-4">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold text-light mb-3">
+                    <i class="fas fa-draw-polygon me-2"></i>Geometri <span class="text-gradient">Teknik</span>
+                </h1>
+                <p class="lead text-light opacity-75">
+                    Perhitungan luas, keliling, volume, dan properti bentuk geometris untuk aplikasi teknik
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Persegi Panjang -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-strong h-100">
+                <div class="card-header bg-gradient-primary">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-square me-2"></i>Persegi Panjang
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="bg-light rounded p-3 d-inline-block">
+                            <div style="width: 80px; height: 50px; border: 2px solid #6366f1; background: rgba(99, 102, 241, 0.1);"></div>
+                        </div>
+                    </div>
+                    <form class="geometry-form" data-shape="rectangle">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Panjang (p)</label>
+                            <input type="number" class="form-control" name="length" step="any" required 
+                                   placeholder="Masukkan panjang">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Lebar (l)</label>
+                            <input type="number" class="form-control" name="width" step="any" required 
+                                   placeholder="Masukkan lebar">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                            <i class="fas fa-calculator me-2"></i>Hitung
+                        </button>
+                    </form>
+                    
+                    <div class="geometry-result mt-3" style="display: none;">
+                        <div class="result-highlight">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Hasil:
+                            </h6>
+                            <div class="result-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lingkaran -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-strong h-100">
+                <div class="card-header bg-gradient-success">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-circle me-2"></i>Lingkaran
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="bg-light rounded p-3 d-inline-block">
+                            <div style="width: 60px; height: 60px; border: 2px solid #10b981; border-radius: 50%; background: rgba(16, 185, 129, 0.1);"></div>
+                        </div>
+                    </div>
+                    <form class="geometry-form" data-shape="circle">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jari-jari (r)</label>
+                            <input type="number" class="form-control" name="radius" step="any" required 
+                                   placeholder="Masukkan jari-jari">
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
+                            <i class="fas fa-calculator me-2"></i>Hitung
+                        </button>
+                    </form>
+                    
+                    <div class="geometry-result mt-3" style="display: none;">
+                        <div class="result-highlight">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Hasil:
+                            </h6>
+                            <div class="result-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Segitiga -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-strong h-100">
+                <div class="card-header bg-gradient-warning">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-play me-2"></i>Segitiga
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="bg-light rounded p-3 d-inline-block">
+                            <div style="width: 0; height: 0; border-left: 30px solid transparent; border-right: 30px solid transparent; border-bottom: 50px solid #f59e0b;"></div>
+                        </div>
+                    </div>
+                    <form class="geometry-form" data-shape="triangle">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Alas (a)</label>
+                            <input type="number" class="form-control" name="base" step="any" required 
+                                   placeholder="Masukkan alas">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tinggi (t)</label>
+                            <input type="number" class="form-control" name="height" step="any" required 
+                                   placeholder="Masukkan tinggi">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sisi 1</label>
+                            <input type="number" class="form-control" name="side1" step="any" 
+                                   placeholder="Sisi pertama (opsional)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sisi 2</label>
+                            <input type="number" class="form-control" name="side2" step="any" 
+                                   placeholder="Sisi kedua (opsional)">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold">
+                            <i class="fas fa-calculator me-2"></i>Hitung
+                        </button>
+                    </form>
+                    
+                    <div class="geometry-result mt-3" style="display: none;">
+                        <div class="result-highlight">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Hasil:
+                            </h6>
+                            <div class="result-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Silinder -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-strong h-100">
+                <div class="card-header bg-gradient-info">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-oil-can me-2"></i>Silinder
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="bg-light rounded p-3 d-inline-block">
+                            <div style="width: 50px; height: 70px; border: 2px solid #06b6d4; border-radius: 25px; background: rgba(6, 182, 212, 0.1); position: relative;">
+                                <div style="width: 50px; height: 10px; border: 2px solid #06b6d4; border-radius: 25px; position: absolute; top: -5px; left: -2px;"></div>
+                                <div style="width: 50px; height: 10px; border: 2px solid #06b6d4; border-radius: 25px; position: absolute; bottom: -5px; left: -2px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <form class="geometry-form" data-shape="cylinder">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jari-jari (r)</label>
+                            <input type="number" class="form-control" name="radius" step="any" required 
+                                   placeholder="Masukkan jari-jari">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tinggi (h)</label>
+                            <input type="number" class="form-control" name="height" step="any" required 
+                                   placeholder="Masukkan tinggi">
+                        </div>
+                        <button type="submit" class="btn btn-info w-100 py-2 fw-semibold">
+                            <i class="fas fa-calculator me-2"></i>Hitung
+                        </button>
+                    </form>
+                    
+                    <div class="geometry-result mt-3" style="display: none;">
+                        <div class="result-highlight">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Hasil:
+                            </h6>
+                            <div class="result-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kubus -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-strong h-100">
+                <div class="card-header bg-gradient-danger">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-cube me-2"></i>Kubus
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="bg-light rounded p-3 d-inline-block">
+                            <div style="width: 50px; height: 50px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.1); transform: rotate(45deg);"></div>
+                        </div>
+                    </div>
+                    <form class="geometry-form" data-shape="cube">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sisi (s)</label>
+                            <input type="number" class="form-control" name="side" step="any" required 
+                                   placeholder="Masukkan panjang sisi">
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold">
+                            <i class="fas fa-calculator me-2"></i>Hitung
+                        </button>
+                    </form>
+                    
+                    <div class="geometry-result mt-3" style="display: none;">
+                        <div class="result-highlight">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Hasil:
+                            </h6>
+                            <div class="result-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bola -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-strong h-100">
+                <div class="card-header bg-gradient-purple" style="background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-basketball-ball me-2"></i>Bola
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="bg-light rounded p-3 d-inline-block">
+                            <div style="width: 60px; height: 60px; border: 2px solid #8b5cf6; border-radius: 50%; background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 70%);"></div>
+                        </div>
+                    </div>
+                    <form class="geometry-form" data-shape="sphere">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jari-jari (r)</label>
+                            <input type="number" class="form-control" name="radius" step="any" required 
+                                   placeholder="Masukkan jari-jari">
+                        </div>
+                        <button type="submit" class="btn w-100 py-2 fw-semibold" style="background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%); color: white; border: none;">
+                            <i class="fas fa-calculator me-2"></i>Hitung
+                        </button>
+                    </form>
+                    
+                    <div class="geometry-result mt-3" style="display: none;">
+                        <div class="result-highlight">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Hasil:
+                            </h6>
+                            <div class="result-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Display -->
+    <div id="geometry-error" class="alert alert-danger mt-3" style="display: none;">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span id="geometry-error-message"></span>
+    </div>
+</div>
+
+<!-- Reference Section -->
+<div class="container pb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-strong">
+                <div class="card-header bg-gradient-dark">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-book me-2"></i>Rumus Geometri
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary mb-3">Bentuk 2D</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-modern">
+                                    <thead>
+                                        <tr>
+                                            <th>Bentuk</th>
+                                            <th>Luas</th>
+                                            <th>Keliling</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Persegi Panjang</td>
+                                            <td>p × l</td>
+                                            <td>2(p + l)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lingkaran</td>
+                                            <td>πr²</td>
+                                            <td>2πr</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Segitiga</td>
+                                            <td>½ × a × t</td>
+                                            <td>a + b + c</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Persegi</td>
+                                            <td>s²</td>
+                                            <td>4s</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary mb-3">Bentuk 3D</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-modern">
+                                    <thead>
+                                        <tr>
+                                            <th>Bentuk</th>
+                                            <th>Volume</th>
+                                            <th>Luas Permukaan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Kubus</td>
+                                            <td>s³</td>
+                                            <td>6s²</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Silinder</td>
+                                            <td>πr²h</td>
+                                            <td>2πr(h + r)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Bola</td>
+                                            <td>⁴/₃πr³</td>
+                                            <td>4πr²</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Balok</td>
+                                            <td>p × l × t</td>
+                                            <td>2(pl + pt + lt)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript untuk Geometry -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup event listeners untuk semua form geometry
+    document.querySelectorAll('.geometry-form').forEach(form => {
+        form.addEventListener('submit', handleGeometryCalculation);
+    });
+});
+
+async function handleGeometryCalculation(e) {
+    e.preventDefault();
+    
+    hideGeometryError();
+    
+    const form = e.target;
+    const shape = form.dataset.shape;
+    const formData = new FormData(form);
+    const data = {
+        shape: shape
+    };
+    
+    // Collect shape-specific inputs
+    if (shape === 'rectangle') {
+        data.length = parseFloat(formData.get('length'));
+        data.width = parseFloat(formData.get('width'));
+    } else if (shape === 'circle') {
+        data.radius = parseFloat(formData.get('radius'));
+    } else if (shape === 'triangle') {
+        data.base = parseFloat(formData.get('base'));
+        data.height = parseFloat(formData.get('height'));
+        const side1 = formData.get('side1');
+        const side2 = formData.get('side2');
+        if (side1) data.side1 = parseFloat(side1);
+        if (side2) data.side2 = parseFloat(side2);
+    } else if (shape === 'cylinder') {
+        data.radius = parseFloat(formData.get('radius'));
+        data.height = parseFloat(formData.get('height'));
+    } else if (shape === 'cube') {
+        data.side = parseFloat(formData.get('side'));
+    } else if (shape === 'sphere') {
+        data.radius = parseFloat(formData.get('radius'));
+    }
+    
+    // Validate inputs
+    for (let key in data) {
+        if (key !== 'shape' && (isNaN(data[key]) || data[key] <= 0)) {
+            showGeometryError('Masukkan nilai yang valid dan positif untuk semua field');
+            return;
+        }
+    }
+    
+    try {
+        // Show loading state
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menghitung...';
+        submitBtn.disabled = true;
+        
+        const response = await fetch('/api/geometry-calc', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        if (result.success) {
+            displayGeometryResult(form, result.result, shape);
+            showSuccessAnimation();
+            loadCalculationHistory();
+        } else {
+            showGeometryError(result.error || 'Terjadi kesalahan saat melakukan perhitungan');
+        }
+    } catch (error) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-calculator me-2"></i>Hitung';
+        submitBtn.disabled = false;
+        
+        showGeometryError('Terjadi kesalahan jaringan. Periksa koneksi internet Anda.');
+    }
+}
+
+function displayGeometryResult(form, result, shape) {
+    const resultDiv = form.querySelector('.geometry-result');
+    const resultContent = form.querySelector('.result-content');
+    
+    let html = '';
+    
+    if (shape === 'rectangle') {
+        html = `
+            <p class="mb-1"><strong>Luas:</strong> ${result.area} satuan²</p>
+            <p class="mb-0"><strong>Keliling:</strong> ${result.perimeter} satuan</p>
+        `;
+    } else if (shape === 'circle') {
+        html = `
+            <p class="mb-1"><strong>Luas:</strong> ${result.area} satuan²</p>
+            <p class="mb-0"><strong>Keliling:</strong> ${result.circumference} satuan</p>
+        `;
+    } else if (shape === 'triangle') {
+        html = `
+            <p class="mb-1"><strong>Luas:</strong> ${result.area} satuan²</p>
+            <p class="mb-0"><strong>Keliling:</strong> ${result.perimeter} satuan</p>
+        `;
+    } else if (shape === 'cylinder') {
+        html = `
+            <p class="mb-1"><strong>Volume:</strong> ${result.volume} satuan³</p>
+            <p class="mb-0"><strong>Luas Permukaan:</strong> ${result.surface_area} satuan²</p>
+        `;
+    } else if (shape === 'cube') {
+        html = `
+            <p class="mb-1"><strong>Volume:</strong> ${result.volume} satuan³</p>
+            <p class="mb-0"><strong>Luas Permukaan:</strong> ${result.surface_area} satuan²</p>
+        `;
+    } else if (shape === 'sphere') {
+        html = `
+            <p class="mb-1"><strong>Volume:</strong> ${result.volume} satuan³</p>
+            <p class="mb-0"><strong>Luas Permukaan:</strong> ${result.surface_area} satuan²</p>
+        `;
+    }
+    
+    resultContent.innerHTML = html;
+    resultDiv.style.display = 'block';
+    resultDiv.classList.add('fade-in');
+}
+
+function showGeometryError(message) {
+    hideGeometryError();
+    const errorDiv = document.getElementById('geometry-error');
+    const errorMessage = document.getElementById('geometry-error-message');
+    
+    if (errorDiv && errorMessage) {
+        errorMessage.textContent = message;
+        errorDiv.style.display = 'block';
+        errorDiv.classList.add('fade-in');
+    }
+}
+
+function hideGeometryError() {
+    const errorDiv = document.getElementById('geometry-error');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+    }
+}
+
+// Load calculation history (from main script)
+async function loadCalculationHistory() {
+    try {
+        const response = await fetch('/api/history');
+        await response.json();
+        // History akan diupdate di halaman utama
+    } catch (error) {
+        console.error('Error loading history:', error);
+    }
+}
+</script>
+
+<style>
+.gradient-purple {
+    background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+}
+
+.btn-gradient-purple {
+    background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+    color: white;
+    border: none;
+}
+
+.btn-gradient-purple:hover {
+    background: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
+    color: white;
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

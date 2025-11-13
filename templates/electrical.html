@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section py-4">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold text-light mb-3">
+                    <i class="fas fa-bolt me-2"></i>Perhitungan <span class="text-gradient">Kelistrikan</span>
+                </h1>
+                <p class="lead text-light opacity-75">
+                    Hitung hukum Ohm, rangkaian seri-paralel, dan analisis daya listrik
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-strong">
+                <div class="card-header bg-gradient-warning">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-bolt me-2"></i>Hukum Ohm
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="electrical-form">
+                        <input type="hidden" name="calculation-type" value="ohms_law">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tegangan (V)</label>
+                            <input type="number" class="form-control" name="voltage" step="any" 
+                                   placeholder="Volt (opsional)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Arus (I)</label>
+                            <input type="number" class="form-control" name="current" step="any" 
+                                   placeholder="Ampere (opsional)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Hambatan (R)</label>
+                            <input type="number" class="form-control" name="resistance" step="any" 
+                                   placeholder="Ohm (opsional)">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 py-3 fw-semibold">
+                            <i class="fas fa-calculator me-2"></i>Hitung
+                        </button>
+                    </form>
+                    
+                    <div id="electrical-result" class="mt-4" style="display: none;"></div>
+                    <div id="electrical-error" class="alert alert-danger mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-strong">
+                <div class="card-header bg-gradient-info">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-project-diagram me-2"></i>Rangkaian Seri/Paralel
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="circuit-form">
+                        <input type="hidden" name="calculation-type" value="series_parallel">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jenis Rangkaian</label>
+                            <select class="form-select" name="circuit-type" required>
+                                <option value="series">Seri</option>
+                                <option value="parallel">Paralel</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nilai Hambatan</label>
+                            <input type="text" class="form-control" name="resistors" 
+                                   placeholder="Contoh: 100, 200, 300" required>
+                            <div class="form-text">Pisahkan dengan koma</div>
+                        </div>
+                        <button type="submit" class="btn btn-info w-100 py-3 fw-semibold">
+                            <i class="fas fa-calculator me-2"></i>Hitung Hambatan Total
+                        </button>
+                    </form>
+                    
+                    <div id="circuit-result" class="mt-4" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <div class="card shadow-strong mt-4">
+                <div class="card-header bg-gradient-success">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-lightbulb me-2"></i>Rumus Hukum Ohm
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <p class="fw-bold mb-2">V = I × R</p>
+                        <p class="small text-muted mb-2">Tegangan = Arus × Hambatan</p>
+                        <p class="fw-bold mb-2">P = V × I</p>
+                        <p class="small text-muted">Daya = Tegangan × Arus</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
