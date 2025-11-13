@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section py-4">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold text-light mb-3 animate-fade-in">
+                    Tim <span class="text-gradient">Pengembang</span>
+                </h1>
+                <p class="lead text-light opacity-75 animate-fade-in" style="animation-delay: 0.2s;">
+                    Kelompok 12 - Technical Math Solver
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card p-4 p-lg-5 animate-slide-up">
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center">
+                        <img src="{{ url_for('static', filename='images/qr-code.png') }}" 
+                             alt="QR Code Identitas Kelompok" 
+                             class="qr-code img-fluid mb-4"
+                             style="max-width: 280px;">
+                        <div class="alert glass-card border-0 text-light mb-0">
+                            <i class="fas fa-qrcode me-2"></i>
+                            <strong>Scan QR Code</strong> untuk informasi tim
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-7">
+                        <div class="team-info p-4">
+                            <div class="text-center text-md-start mb-4">
+                                <h2 class="text-gradient fw-bold">Technical Math Solver</h2>
+                                <p class="text-muted">Aplikasi Edutainment Matematika Teknik</p>
+                            </div>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-sm-6">
+                                    <div class="glass-card p-3 text-center">
+                                        <i class="fas fa-users text-primary mb-2"></i>
+                                        <h6 class="fw-bold mb-1">Nama Kelompok</h6>
+                                        <p class="mb-0 text-primary fw-semibold">TEKNIK</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="glass-card p-3 text-center">
+                                        <i class="fas fa-layer-group text-warning mb-2"></i>
+                                        <h6 class="fw-bold mb-1">Divisi</h6>
+                                        <p class="mb-0 text-warning fw-semibold">SMK</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card p-3 mb-4">
+                                <i class="fas fa-university text-success me-2"></i>
+                                <strong>Institusi:</strong> Pendidikan Matematika, FKIP, Universitas Jember
+                            </div>
+                            
+                            <h5 class="fw-bold mb-3 text-gradient">Anggota Tim:</h5>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="team-member-card">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center" 
+                                                     style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-user text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="fw-bold mb-1">Tedy Bali Ragila</h6>
+                                                <p class="text-muted small mb-1">NIM: 24-001</p>
+                                                <span class="badge badge-modern">Backend Developer & Project Manager</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="team-member-card">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-gradient-warning rounded-circle d-flex align-items-center justify-content-center" 
+                                                     style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-palette text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="fw-bold mb-1">Ahmad Maulana Kafiyahya</h6>
+                                                <p class="text-muted small mb-1">NIM: 24-002</p>
+                                                <span class="badge badge-modern">Frontend Developer & UI/UX Designer</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="team-member-card">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-gradient-success rounded-circle d-flex align-items-center justify-content-center" 
+                                                     style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-check-circle text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="fw-bold mb-1">Anindya Fausta</h6>
+                                                <p class="text-muted small mb-1">NIM: 24-003</p>
+                                                <span class="badge badge-modern">Content Specialist & Tester</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 p-3 glass-card">
+                                <h6 class="fw-bold mb-2">
+                                    <i class="fas fa-code-branch me-2"></i>Repository:
+                                </h6>
+                                <code class="bg-dark text-light p-2 rounded d-block">
+                                    https://github.com/kelompok12-technical/technical-math-solver
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JSON Data Section -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-soft">
+                            <div class="card-header bg-gradient-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-code me-2"></i>Data QR Code (JSON Format)
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <pre class="bg-dark text-light p-4 rounded"><code>{
+    "nama_kelompok": "TEKNIK",
+    "aplikasi": "Technical Math Solver", 
+    "anggota": [
+        {
+            "nama": "Tedy Bali Ragila", 
+            "nim": "24-001", 
+            "role": "Backend Developer & Project Manager"
+        },
+        {
+            "nama": "Ahmad Maulana Kafiyahya", 
+            "nim": "24-002", 
+            "role": "Frontend Developer & UI/UX Designer"
+        },
+        {
+            "nama": "Anindya Fausta", 
+            "nim": "24-003", 
+            "role": "Content Specialist & Tester"
+        }
+    ],
+    "institusi": "Pendidikan Matematika, FKIP, Universitas Jember",
+    "repository": "https://github.com/kelompok12-technical/technical-math-solver"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

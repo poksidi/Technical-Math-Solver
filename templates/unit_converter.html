@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="fas fa-exchange-alt me-2"></i>Konversi Satuan</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Konverter Satuan</h5>
+            </div>
+            <div class="card-body">
+                <form id="conversion-form">
+                    <div class="mb-3">
+                        <label class="form-label">Kategori Satuan</label>
+                        <select class="form-select" id="category" required>
+                            <option value="length">Panjang</option>
+                            <option value="mass">Massa</option>
+                            <option value="temperature">Suhu</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Dari</label>
+                            <select class="form-select" id="from-unit" required>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Ke</label>
+                            <select class="form-select" id="to-unit" required>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Nilai</label>
+                        <input type="number" class="form-control" id="value" step="any" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sync-alt me-2"></i>Konversi
+                    </button>
+                </form>
+                
+                <div id="conversion-result" class="mt-3 alert alert-info" style="display: none;">
+                    <h6>Hasil Konversi:</h6>
+                    <p id="result-text" class="mb-0"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Informasi Satuan</h5>
+            </div>
+            <div class="card-body">
+                <div id="unit-info">
+                    <p class="text-muted">Pilih kategori satuan untuk melihat informasi detail.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Konversi Cepat</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <button class="btn btn-outline-primary w-100 quick-convert" data-from="m" data-to="cm">
+                            m → cm
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-primary w-100 quick-convert" data-from="kg" data-to="g">
+                            kg → g
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-primary w-100 quick-convert" data-from="c" data-to="f">
+                            °C → °F
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-primary w-100 quick-convert" data-from="in" data-to="cm">
+                            in → cm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
