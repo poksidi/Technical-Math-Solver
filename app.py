@@ -17,22 +17,22 @@ TEAM_INFO = {
     "anggota": [
         {
             "nama": "Tedy Bali Ragila", 
-            "nim": "24-001", 
-            "role": "Backend Developer & Project Manager"
+            "nim": "24-071", 
+            "role": "Full Stack Developer & Project Manager"
         },
         {
             "nama": "Ahmad Maulana Kafiyahya", 
             "nim": "24-002", 
-            "role": "Frontend Developer & UI/UX Designer"
+            "role": "Frontend Developer & Technical Content"
         },
         {
-            "nama": "Anindya Fausta", 
-            "nim": "24-003", 
-            "role": "Content Specialist & Tester"
+            "nama": "Anindya Fausta Adhidaiva Cetta", 
+            "nim": "24-041", 
+            "role": "Mathematical Content"
         }
     ],
     "institusi": "Pendidikan Matematika, FKIP, Universitas Jember",
-    "repository": "https://github.com/kelompok12-technical/technical-math-solver"
+    "repository": "https://github.com/poksidi/Technical-Math-Solver"
 }
 
 def load_calculations():
@@ -433,3 +433,4 @@ def geometry_calc():
     
     except Exception as e:
         return jsonify({'error': f'Geometry calculation error: {str(e)}', 'success': False})
+
