@@ -113,7 +113,7 @@ technical_math_solver/
     ├── engineering.html  # Modul Rekayasa (Tabbed Interface)
     └── team.html         # Halaman Profil Tim
 
-👥 Tim Pengembang (Kelompok 12)
+## 👥 Tim Pengembang (Kelompok 12)
 Proyek ini dikembangkan oleh mahasiswa Pendidikan Matematika, FKIP, Universitas Jember:
 
 1. Tedy Bali Ragila (NIM: 24-071)
@@ -125,7 +125,8 @@ Proyek ini dikembangkan oleh mahasiswa Pendidikan Matematika, FKIP, Universitas 
 3. Anindya Fausta Adhidaiva Cetta (NIM: 24-041)
 ⭐ Mathematical Content Specialist
 
-📝 Lisensi
+## 📝 Lisensi
 Project ini dibuat untuk tujuan pendidikan. Silakan digunakan dan dikembangkan lebih lanjut.
+
 
 Built with ❤️ for better technical education.
