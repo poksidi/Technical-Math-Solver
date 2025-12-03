@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-dark mb-1">Kalkulator Listrik</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Listrik</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="bg-white p-2 rounded shadow-sm text-warning">
+        <i class="fas fa-bolt fa-2x"></i>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+       </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4 shadow-sm">
+            
+            {% if result %}
+                <div class="alert alert-warning text-dark text-center fw-bold fs-5 mb-4">
+                    {{ result }}
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Pilih Kategori Rangkaian:</label>
+                    <select id="catSelect" name="category" class="form-select bg-light" onchange="updateFormulas()">
+                        <option value="" disabled selected>-- Pilih Kategori --</option>
+                        {% for cat in elec_menu.keys() %}
+                            <option value="{{ cat }}" {% if s_cat == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Apa yang ingin dihitung?</label>
+                    <select id="formSelect" name="formula" class="form-select" onchange="updateLabels()">
+                        <option value="" disabled selected>-- Pilih Rumus --</option>
+                    </select>
+                </div>
+
+                <hr>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label id="label1" class="form-label">Nilai 1</label>
+                        <input type="number" step="any" name="val1" class="form-control" required value="{{ v1 }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label id="label2" class="form-label">Nilai 2</label>
+                        <input type="number" step="any" name="val2" class="form-control" required value="{{ v2 }}">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-warning w-100 mt-4 fw-bold">Hitung Sekarang</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ambil Data Menu dari Python
+    const elecData = {{ elec_menu | tojson }};
+
+    const catSelect = document.getElementById('catSelect');
+    const formSelect = document.getElementById('formSelect');
+    const label1 = document.getElementById('label1');
+    const label2 = document.getElementById('label2');
+
+    // Fungsi 1: Saat Kategori dipilih, isi dropdown Rumus
+    function updateFormulas() {
+        const selectedCat = catSelect.value;
+        formSelect.innerHTML = '<option value="" disabled selected>-- Pilih Rumus --</option>'; // Reset
+
+        if (selectedCat && elecData[selectedCat]) {
+            const formulas = elecData[selectedCat];
+            
+            // Loop dictionary rumus
+            for (const [key, info] of Object.entries(formulas)) {
+                let option = document.createElement('option');
+                option.value = key;
+                option.textContent = info.label;
+                formSelect.appendChild(option);
+            }
+        }
+        // Reset label jika kategori berubah
+        label1.textContent = "Nilai 1";
+        label2.textContent = "Nilai 2";
+    }
+
+    // Fungsi 2: Saat Rumus dipilih, ubah Label Input
+    function updateLabels() {
+        const selectedCat = catSelect.value;
+        const selectedForm = formSelect.value;
+
+        if (selectedCat && selectedForm) {
+            const info = elecData[selectedCat][selectedForm];
+            // Update teks label input (misal: "Arus (A)" atau "Resistor 1")
+            label1.textContent = info.inputs[0];
+            label2.textContent = info.inputs[1];
+        }
+    }
+
+    // --- MEMORI (Agar pilihan tidak hilang setelah reload) ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const prevCat = "{{ s_cat }}";
+        const prevForm = "{{ s_form }}";
+
+        if (prevCat) {
+            updateFormulas(); // Isi ulang dropdown rumus
+            formSelect.value = prevForm; // Pilih rumus sebelumnya
+            updateLabels(); // Perbaiki label input
+        }
+    });
+</script>
+{% endblock %}

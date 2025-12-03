@@ -1,0 +1,497 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-center mb-4"><i class="fas fa-cogs text-primary"></i> Engineering Studio</h2>
+
+<ul class="nav nav-pills nav-fill mb-4 shadow-sm p-1 bg-white rounded">
+    <li class="nav-item">
+        <button class="nav-link {% if active_tab == 'mech' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#mech">
+            <i class="fas fa-wrench"></i> Mechanical
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link {% if active_tab == 'struct' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#struct">
+            <i class="fas fa-building"></i> Structural
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link {% if active_tab == 'fluid' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#fluid">
+            <i class="fas fa-tint"></i> Fluid Dynamics
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#draw">
+            <i class="fas fa-pencil-ruler"></i> Drawing
+        </button>
+    </li>
+</ul>
+
+{% if result %}
+    {% if result is mapping and result.type == 'beam_res' %}
+        <div class="alert alert-success shadow-sm mb-4">
+            <h5 class="alert-heading text-center fw-bold"><i class="fas fa-check-circle"></i> Hasil Analisis Struktur</h5>
+            <p class="text-center text-muted small mb-3">{{ result.desc }}</p>
+            <div class="row text-center">
+                <div class="col-md-3 border-end">
+                    <h6 class="text-muted small">Momen Maks</h6>
+                    <h3 class="fw-bold text-danger">{{ result.M }}</h3>
+                </div>
+                <div class="col-md-3 border-end">
+                    <h6 class="text-muted small">Geser (V)</h6>
+                    <h3 class="fw-bold text-warning">{{ result.V }}</h3>
+                </div>
+                <div class="col-md-3 border-end">
+                    <h6 class="text-muted small">Lendutan</h6>
+                    <h3 class="fw-bold text-primary">{{ result.D }}</h3>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small">Inersia (I)</h6>
+                    <h4 class="fw-bold text-secondary">{{ result.I }}</h4>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-primary text-center fw-bold fs-5 shadow-sm mb-4">
+            {{ result }}
+        </div>
+    {% endif %}
+{% endif %}
+
+<div class="tab-content">
+    
+    <div class="tab-pane fade {% if active_tab == 'mech' %}show active{% endif %}" id="mech">
+        <div class="card p-4 border-primary">
+            <h5 class="text-primary mb-3">Mechanical Advantage (Universal)</h5>
+            <form method="POST">
+                <input type="hidden" name="category" value="mech">
+                <div class="mb-4">
+                    <label class="fw-bold">Pilih Alat:</label>
+                    <select id="mechSelect" name="tool_type" class="form-select bg-light" onchange="updateMechInputs()">
+                        <option value="" disabled selected>-- Pilih Jenis --</option>
+                        {% for k, v in mech_menu.items() %}
+                            <option value="{{ k }}" {% if s_tool == k and active_tab == 'mech' %}selected{% endif %}>{{ v.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border">
+                            <h6 class="fw-bold text-dark border-bottom pb-2">1. Gaya (Forces)</h6>
+                            <label class="form-label small mt-2">Beban ($F_{out}$)</label>
+                            <input type="number" step="any" name="f_load" class="form-control mb-2" value="{{ inputs.f_load }}" placeholder="N">
+                            <label class="form-label small">Kuasa ($F_{in}$)</label>
+                            <input type="number" step="any" name="f_effort" class="form-control" value="{{ inputs.f_effort }}" placeholder="N">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border">
+                            <h6 class="fw-bold text-dark border-bottom pb-2">2. Geometri (Dimensions)</h6>
+                            <div id="mechGeoInputs"><p class="text-muted small mt-2">Pilih alat dulu...</p></div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-4 fw-bold">Hitung</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="tab-pane fade {% if active_tab == 'struct' %}show active{% endif %}" id="struct">
+        <div class="card p-4 border-danger">
+            <h5 class="text-danger mb-3">Beam & Material Analysis</h5>
+            <form method="POST">
+                <input type="hidden" name="category" value="struct">
+                <div class="mb-4">
+                    <label class="fw-bold">Tipe Hitungan:</label>
+                    <select id="structSelect" name="tool_type" class="form-select bg-light" onchange="toggleStructInputs()">
+                        {% for k, v in struct_menu.items() %}
+                            <option value="{{ k }}" {% if s_tool == k %}selected{% endif %}>{{ v.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="beamForm">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded h-100 border">
+                                <h6 class="fw-bold text-dark border-bottom pb-2">1. Key Properties</h6>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-12"><label class="small fw-bold">Panjang (L)</label><div class="input-group input-group-sm"><input type="number" step="any" name="length" class="form-control" value="{{ inputs.length }}"><span class="input-group-text">m</span></div></div>
+                                    <div class="col-6"><label class="small fw-bold">Lebar (b)</label><div class="input-group input-group-sm"><input type="number" step="any" name="width" class="form-control" value="{{ inputs.width }}"><span class="input-group-text">mm</span></div></div>
+                                    <div class="col-6"><label class="small fw-bold">Tinggi (h)</label><div class="input-group input-group-sm"><input type="number" step="any" name="height" class="form-control" value="{{ inputs.height }}"><span class="input-group-text">mm</span></div></div>
+                                </div>
+                                <label class="small fw-bold">Material</label>
+                                <select name="material" class="form-select form-select-sm">
+                                    {% for k, v in materials.items() %}
+                                        <option value="{{ k }}" {% if inputs.material == k %}selected{% endif %}>{{ v.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded h-100 border">
+                                <h6 class="fw-bold text-dark border-bottom pb-2">2. Loads</h6>
+                                <label class="small fw-bold mt-2">Tipe Beban</label>
+                                <select name="load_type" class="form-select form-select-sm mb-3">
+                                    <option value="point" {% if inputs.load_type == 'point' %}selected{% endif %}>Beban Terpusat (kN)</option>
+                                    <option value="dist" {% if inputs.load_type == 'dist' %}selected{% endif %}>Beban Merata (kN/m)</option>
+                                </select>
+                                <label class="small fw-bold">Nilai Beban</label>
+                                <input type="number" step="any" name="load_val" class="form-control form-control-sm" value="{{ inputs.load_val }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="stressForm" class="d-none">
+                    <div class="row p-3">
+                        <div class="col-6"><label>Gaya (N)</label><input type="number" step="any" name="s_force" class="form-control" value="{{ inputs.s_force }}"></div>
+                        <div class="col-6"><label>Luas (mm²)</label><input type="number" step="any" name="s_area" class="form-control" value="{{ inputs.s_area }}"></div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-danger w-100 mt-4 fw-bold">Calculate</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="tab-pane fade {% if active_tab == 'fluid' %}show active{% endif %}" id="fluid">
+        <div class="card p-4 border-info">
+            <h5 class="text-info mb-3">Fluid Mechanics Calculator</h5>
+            
+            <form method="POST">
+                <input type="hidden" name="category" value="fluid">
+                
+                <div class="mb-4">
+                    <label class="fw-bold">Pilih Kalkulator:</label>
+                    <select id="fluidSelect" name="tool_type" class="form-select bg-light" onchange="updateFluidInputs()">
+                        <option value="" disabled selected>-- Pilih Rumus --</option>
+                        {% for k, v in fluid_menu.items() %}
+                            <option value="{{ k }}" {% if s_tool == k and active_tab == 'fluid' %}selected{% endif %}>{{ v.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <h6 class="fw-bold text-dark border-bottom pb-2">Input Parameters</h6>
+                            <div id="fluidInputs" class="row g-3 mt-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-3 bg-white rounded border h-100">
+                            <h6 class="fw-bold text-muted border-bottom pb-2">Nilai Umum (Referensi)</h6>
+                            <ul class="list-unstyled small mt-2 text-muted">
+                                <li class="mb-2"><strong>Massa Jenis (ρ):</strong><br>Air = 1000 kg/m³<br>Minyak ≈ 800 kg/m³<br>Raksa = 13600 kg/m³</li>
+                                <li class="mb-2"><strong>Viskositas (μ):</strong><br>Air (20°C) ≈ 0.001 Pa.s<br>Oli Mesin ≈ 0.2 - 0.5 Pa.s</li>
+                                <li><strong>Gravitasi (g):</strong><br>Bumi = 9.81 m/s²</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-info w-100 mt-4 text-white fw-bold">Hitung / Calculate</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="draw">
+        
+        <style>
+            .workspace-bg {
+                background-color: #f0f2f5;
+                padding: 20px;
+                height: 600px;
+                overflow: auto;
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .engineering-paper {
+                background-color: white;
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+                position: relative;
+                width: 840px; 
+                height: 594px; 
+                transition: background 0.3s;
+            }
+            /* Grid Pattern */
+            .engineering-paper.show-grid {
+                background-image: 
+                    linear-gradient(#b0c4de 1px, transparent 1px), 
+                    linear-gradient(90deg, #b0c4de 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            
+            /* --- RULER STYLES (DIKEMBALIKAN) --- */
+            .ruler-top {
+                height: 20px;
+                width: 100%;
+                background: url('data:image/svg+xml;utf8,<svg width="40" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M0 20 L0 10 M10 20 L10 15 M20 20 L20 10 M30 20 L30 15" stroke="black" fill="none"/></svg>') repeat-x;
+                border-bottom: 1px solid #999;
+                position: absolute;
+                top: 0;
+                left: 20px; /* Geser agar tidak menimpa ruler kiri */
+                opacity: 0.6;
+            }
+            .ruler-left {
+                width: 20px;
+                height: 100%;
+                background: url('data:image/svg+xml;utf8,<svg width="20" height="40" xmlns="http://www.w3.org/2000/svg"><path d="M20 0 L10 0 M20 10 L15 10 M20 20 L10 20 M20 30 L15 30" stroke="black" fill="none"/></svg>') repeat-y;
+                border-right: 1px solid #999;
+                position: absolute;
+                left: 0;
+                top: 20px; /* Geser agar tidak menimpa ruler atas */
+                opacity: 0.6;
+            }
+            
+            /* --- ETIKET / TITLE BLOCK STYLES (RAPI) --- */
+            .title-block {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                width: 260px;
+                background: rgba(255,255,255,1);
+                font-family: 'Arial', sans-serif;
+                z-index: 10;
+                box-shadow: 0 0 0 1px black; /* Border luar */
+            }
+            .tb-table {
+                width: 100%;
+                border-collapse: collapse; /* Garis tunggal */
+                margin: 0;
+            }
+            .tb-table td {
+                border: 1px solid black;
+                padding: 3px 5px;
+                vertical-align: top;
+            }
+            .title-label {
+                font-size: 8px;
+                color: #444;
+                font-weight: bold;
+                text-transform: uppercase;
+                display: block;
+                margin-bottom: 0px;
+            }
+            .tb-input {
+                border: none;
+                width: 100%;
+                background: transparent;
+                font-family: 'Courier New', monospace;
+                font-size: 11px;
+                font-weight: 600;
+                color: #000;
+                padding: 0;
+                margin: 0;
+            }
+            .tb-input:focus { outline: none; background: #f0f8ff; }
+        </style>
+
+        <div class="card p-0 overflow-hidden border-secondary">
+            <div class="d-flex justify-content-between align-items-center bg-white p-2 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                    <h6 class="m-0 fw-bold ps-2 text-primary"><i class="fas fa-drafting-compass"></i> SmartDraw Lite</h6>
+                    <div class="vr mx-2"></div>
+                    <button class="btn btn-sm btn-light border" onclick="toggleGrid()" title="Toggle Grid"><i class="fas fa-border-all"></i> Grid</button>
+                    <button class="btn btn-sm btn-light border" onclick="clearCanvas()" title="Clear Paper"><i class="fas fa-file"></i> New</button>
+                </div>
+                <div>
+                    <a id="downloadLink" class="btn btn-sm btn-primary fw-bold" onclick="downloadCanvas(this)">
+                        <i class="fas fa-share-square"></i> Export to PNG
+                    </a>
+                </div>
+            </div>
+
+            <div class="d-flex">
+                <div class="bg-light border-end p-2 d-flex flex-column align-items-center gap-2" 
+                    style="width: 100px; z-index: 5; height: 600px; overflow-y: auto; max-height: 600px;">
+                    <span class="small fw-bold text-muted mb-1">Tools</span>
+                    <button class="btn btn-white border shadow-sm tool-btn active w-100 py-2" onclick="setTool('select')" title="Select & Move">
+                        <i class="fas fa-arrows-alt mb-1"></i><br>
+                        <span style="font-size:8px; font-weight:600;">Move</span>
+                    </button>
+
+                    <button class="btn btn-white border shadow-sm tool-btn w-100 py-2" onclick="setTool('brush')" title="Freehand Draw">
+                        <i class="fas fa-pencil-alt mb-1"></i><br>
+                        <span style="font-size:8px; font-weight:600;">Draw</span>
+                    </button>
+                    <div class="border-top w-100 my-1"></div>
+                    <button class="btn btn-white border shadow-sm tool-btn w-100" onclick="setTool('line')" title="Line"><i class="fas fa-slash"></i><br><span style="font-size:9px">Line</span></button>
+                    <button class="btn btn-white border shadow-sm tool-btn w-100" onclick="setTool('rect')" title="Rectangle"><i class="far fa-square"></i><br><span style="font-size:9px">Rect</span></button>
+                    <button class="btn btn-white border shadow-sm tool-btn w-100" onclick="setTool('circle')" title="Circle"><i class="far fa-circle"></i><br><span style="font-size:7px">Circle</span></button>
+                    <div class="border-top w-100 my-1"></div>
+                    <button class="btn btn-white border shadow-sm tool-btn w-100" onclick="setTool('text')" title="Text Label"><i class="fas fa-font"></i><br><span style="font-size:9px">Text</span></button>
+                    <button class="btn btn-white border shadow-sm tool-btn w-100" onclick="setTool('eraser')" title="Eraser"><i class="fas fa-eraser"></i><br><span style="font-size:8px">Erase</span></button>
+                    <div class="border-top w-100 my-1"></div>
+                    <input type="color" id="strokeColor" value="#000000" class="form-control form-control-color p-1 w-100" title="Color">
+                    <input type="range" id="lineWidth" min="1" max="10" value="2" class="form-range mt-2" title="Thickness">
+                    <div class="border-top w-100 my-2"></div>
+                    
+                    <span class="small fw-bold text-muted mb-1 text-center d-block">Outlines</span>
+                    
+                    <div class="row g-1 px-1">
+                        <div class="col-6">
+                            <button class="btn btn-white border shadow-sm tool-btn w-100 p-1" onclick="setTool('room_l')" title="L-Shape Room">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4v16h16v-6h-10v-10h-6z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-white border shadow-sm tool-btn w-100 p-1" onclick="setTool('room_t')" title="T-Shape Room">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16v6h-5v10h-6v-10h-5z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-white border shadow-sm tool-btn w-100 p-1" onclick="setTool('room_u')" title="U-Shape Room">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4v16h16v-16h-5v11h-6v-11h-5z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-white border shadow-sm tool-btn w-100 p-1" onclick="setTool('room_plus')" title="Plus-Shape Room">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 4v5h-5v6h5v5h6v-5h5v-6h-5v-5h-6z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="border-top w-100 my-2"></div>
+                        
+                        <span class="small fw-bold text-muted mb-1 text-center d-block" style="font-size: 10px;">OPENINGS</span>
+                        
+                        <div class="row g-1 px-1">
+                            <div class="col-6">
+                                <button class="btn btn-white border shadow-sm tool-btn w-100 p-1" onclick="setTool('door_single')" title="Single Door" style="height: 40px;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M5 21V5h14"/> <path d="M5 5c9 0 14 5 14 16"/> </svg>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-white border shadow-sm tool-btn w-100 p-1" onclick="setTool('door_double')" title="Double Door" style="height: 40px;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M2 21V10c0-6 4-8 10-8 6 0 10 2 10 8v11"/> <path d="M12 21V5"/> </svg>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-white border shadow-sm tool-btn w-100 p-1" onclick="setTool('window_fix')" title="Standard Window" style="height: 40px;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="5" width="18" height="14" rx="1" />
+                                        <path d="M3 12h18" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-white border shadow-sm tool-btn w-100 p-1" onclick="setTool('window_slide')" title="Sliding Window" style="height: 40px;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="5" width="18" height="14" />
+                                        <path d="M12 5v14" />
+                                        <path d="M8 9l4-4 4 4" /> </svg>
+                                </button>
+                            </div>
+                        </div>
+                </div>
+
+                <div class="flex-grow-1 workspace-bg">
+                    <div class="engineering-paper" id="paperArea">
+                        <div class="ruler-top"></div>
+                        <div class="ruler-left"></div>
+                        <canvas id="drawingCanvas" width="820" height="574" style="position: absolute; top: 20px; left: 20px; cursor: crosshair;"></canvas>
+
+                        <div class="title-block">
+                            <table class="tb-table">
+                                <tr>
+                                    <td colspan="2">
+                                        <span class="title-label">Site / Institution</span>
+                                        <input type="text" id="tb-site" class="tb-input" value="SMK TEKNIK JEMBER">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="height: 38px;">
+                                        <span class="title-label">Title</span>
+                                        <input type="text" id="tb-title" class="tb-input" style="font-size: 12px; font-weight: 800;" value="RANGKAIAN LISTRIK DASAR">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="60%">
+                                        <span class="title-label">Drawn By</span>
+                                        <input type="text" id="tb-drawn" class="tb-input" value="{{ team.members[1] }}">
+                                    </td>
+                                    <td width="40%">
+                                        <span class="title-label">Date</span>
+                                        <input type="text" id="tb-date" class="tb-input" placeholder="DD/MM/YYYY">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="title-label">Scale</span>
+                                        <input type="text" id="tb-scale" class="tb-input" value="1:100">
+                                    </td>
+                                    <td>
+                                        <span class="title-label">Rev</span>
+                                        <input type="text" id="tb-rev" class="tb-input" value="A.01">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const mechMenu = {{ mech_menu | tojson }};
+    const fluidMenu = {{ fluid_menu | tojson }};
+    const savedInputs = {{ inputs | tojson }};
+
+    function updateMechInputs() {
+        const tool = document.getElementById('mechSelect').value;
+        const container = document.getElementById('mechGeoInputs');
+        container.innerHTML = '';
+        if (tool && mechMenu[tool]) {
+            mechMenu[tool].geo_inputs.forEach((lbl, i) => {
+                const val = savedInputs['geo' + (i+1)] || '';
+                container.innerHTML += `<div class="mb-2"><label class="small fw-bold">${lbl}</label><input type="number" step="any" name="geo${i+1}" class="form-control" value="${val}"></div>`;
+            });
+        }
+    }
+
+    function toggleStructInputs() {
+        const val = document.getElementById('structSelect').value;
+        const beam = document.getElementById('beamForm');
+        const stress = document.getElementById('stressForm');
+        if (val === 'stress_analysis') { beam.classList.add('d-none'); stress.classList.remove('d-none'); }
+        else { beam.classList.remove('d-none'); stress.classList.add('d-none'); }
+    }
+
+    function updateFluidInputs() {
+        const tool = document.getElementById('fluidSelect').value;
+        const container = document.getElementById('fluidInputs');
+        container.innerHTML = '';
+
+        if (tool && fluidMenu[tool]) {
+            fluidMenu[tool].inputs.forEach((lbl, i) => {
+                const val = savedInputs['val' + (i+1)] || '';
+                const col = document.createElement('div');
+                col.className = 'col-12'; // Full width in the left column
+                col.innerHTML = `
+                    <label class="form-label small fw-bold">${lbl}</label>
+                    <input type="number" step="any" name="val${i+1}" class="form-control" value="${val}" required>
+                `;
+                container.appendChild(col);
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (document.getElementById('mechSelect').value) updateMechInputs();
+        toggleStructInputs();
+        if (document.getElementById('fluidSelect').value) updateFluidInputs();
+    });
+</script>
+<script src="{{ url_for('static', filename='drawing.js') }}"></script>
+{% endblock %}

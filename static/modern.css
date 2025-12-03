@@ -1,0 +1,122 @@
+/* IMPORT FONT KEREN */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #858796;
+    --sidebar-width: 250px;
+    --bg-light: #f3f4f6;
+    --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+    overflow-x: hidden;
+}
+
+/* SIDEBAR STYLE */
+#wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    width: var(--sidebar-width);
+    margin-left: 0;
+    background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+    color: white;
+    transition: margin .25s ease-out;
+    position: fixed;
+    z-index: 1000;
+}
+
+.sidebar-heading {
+    padding: 1.5rem 1.25rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 1px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+    background-color: transparent;
+    color: rgba(255,255,255,0.8);
+    border: none;
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.list-group-item:hover, .list-group-item.active-nav {
+    background-color: rgba(255,255,255,0.2);
+    color: #fff;
+    font-weight: 600;
+    border-left: 4px solid #fff;
+}
+
+.list-group-item i {
+    width: 25px;
+}
+
+/* CONTENT WRAPPER */
+#page-content-wrapper {
+    width: 100%;
+    margin-left: var(--sidebar-width);
+    padding: 20px;
+}
+
+/* MODERN CARDS */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s;
+    background: white;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid #e3e6f0;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+/* FORM ELEMENTS */
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #d1d3e2;
+    background-color: #fcfcfc;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    border-color: #bac8f3;
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+/* UTILITY */
+.text-gradient {
+    background: -webkit-linear-gradient(#4e73df, #224abe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

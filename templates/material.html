@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-center mb-4"><i class="fas fa-weight-hanging text-secondary"></i> Kalkulator Berat Material</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card p-4 shadow-sm">
+            
+            {% if result and result is mapping %} <div class="alert alert-success text-center shadow-sm">
+                    <h4 class="alert-heading fw-bold">Berat Total: {{ result.weight_total }} kg</h4>
+                    <hr>
+                    <div class="row text-start small">
+                        <div class="col-6">
+                            Material: <strong>{{ result.material }}</strong><br>
+                            Density: {{ result.density }} kg/m³<br>
+                            Bentuk: {{ result.shape }}
+                        </div>
+                        <div class="col-6 text-end">
+                            Jumlah: {{ result.qty }} pcs<br>
+                            Berat Satuan: {{ result.weight_one }} kg
+                        </div>
+                    </div>
+                </div>
+            {% elif result %}
+                <div class="alert alert-danger text-center">{{ result }}</div>
+            {% endif %}
+
+            <form method="POST">
+                <div class="row g-3">
+                    
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Jenis Material</label>
+                        <select name="material" class="form-select bg-light" required>
+                            <option value="" disabled selected>-- Pilih Material --</option>
+                            {% for key, val in materials.items() %}
+                                <option value="{{ key }}" {% if s_mat == key %}selected{% endif %}>
+                                    {{ val.name }} ({{ val.density }} kg/m³)
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Jumlah (Pcs)</label>
+                        <input type="number" name="quantity" class="form-control" value="{{ s_qty }}" min="1" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Bentuk Profil</label>
+                        <select id="shapeSelect" name="shape" class="form-select bg-light" onchange="updateInputs()" required>
+                            <option value="plate" {% if s_shape == 'plate' %}selected{% endif %}>Plat (Plate)</option>
+                            <option value="round_bar" {% if s_shape == 'round_bar' %}selected{% endif %}>As Bulat (Round Bar)</option>
+                            <option value="square_bar" {% if s_shape == 'square_bar' %}selected{% endif %}>As Kotak (Square Bar)</option>
+                            <option value="pipe" {% if s_shape == 'pipe' %}selected{% endif %}>Pipa / Tabung</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                
+                <h5 class="text-secondary mb-3"><i class="fas fa-ruler-combined"></i> Input Dimensi (dalam mm)</h5>
+
+                <div class="row g-3" id="dimensionInputs">
+                    
+                    <div class="col-md-4" id="grp-length">
+                        <label class="form-label">Panjang (L)</label>
+                        <div class="input-group">
+                            <input type="number" step="any" name="length" class="form-control" placeholder="mm" value="{{ dims.l }}">
+                            <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4" id="grp-width">
+                        <label class="form-label" id="lbl-width">Lebar (W)</label>
+                        <div class="input-group">
+                            <input type="number" step="any" name="width" class="form-control" placeholder="mm" value="{{ dims.w }}">
+                            <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4" id="grp-thickness">
+                        <label class="form-label" id="lbl-thickness">Tebal (T)</label>
+                        <div class="input-group">
+                            <input type="number" step="any" name="thickness" class="form-control" placeholder="mm" value="{{ dims.t }}">
+                            <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4" id="grp-od">
+                        <label class="form-label">Diameter Luar (OD)</label>
+                        <div class="input-group">
+                            <input type="number" step="any" name="outer_dia" class="form-control" placeholder="mm" value="{{ dims.od }}">
+                            <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+
+                     <div class="col-md-4" id="grp-id">
+                        <label class="form-label">Diameter Dalam (ID)</label>
+                        <div class="input-group">
+                            <input type="number" step="any" name="inner_dia" class="form-control" placeholder="Opsional" value="{{ dims.id }}">
+                            <span class="input-group-text">mm</span>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.75rem;">*Isi Tebal Dinding ATAU ID</small>
+                    </div>
+
+                </div>
+                
+                <div class="mt-4 text-center">
+                    
+
+[Image of technical drawing dimensions for plate round bar and pipe]
+
+                </div>
+
+                <button type="submit" class="btn btn-secondary w-100 mt-4 fw-bold">
+                    <i class="fas fa-calculator"></i> Hitung Berat Material
+                </button>
+            </form>
+        </div>
+
+        <div class="alert alert-light mt-4 border">
+            <small class="text-muted">
+                <strong>Catatan Teknis:</strong><br>
+                1. Semua input dimensi dalam milimeter (mm).<br>
+                2. Perhitungan mengabaikan toleransi material (Roll Tolerance).<br>
+                3. Massa jenis menggunakan standar umum industri (misal: Baja = 7850 kg/m³).
+            </small>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateInputs() {
+        const shape = document.getElementById('shapeSelect').value;
+        
+        // Ambil elemen wrapper
+        const grpL = document.getElementById('grp-length');
+        const grpW = document.getElementById('grp-width');
+        const grpT = document.getElementById('grp-thickness');
+        const grpOD = document.getElementById('grp-od');
+        const grpID = document.getElementById('grp-id');
+        
+        const lblW = document.getElementById('lbl-width');
+        const lblT = document.getElementById('lbl-thickness');
+
+        // Reset: Sembunyikan semua dulu kecuali Panjang
+        grpW.style.display = 'none';
+        grpT.style.display = 'none';
+        grpOD.style.display = 'none';
+        grpID.style.display = 'none';
+
+        // Logika Tampilan Berdasarkan Bentuk
+        if (shape === 'plate') {
+            // Plat: Butuh Panjang, Lebar, Tebal
+            grpW.style.display = 'block';
+            lblW.textContent = "Lebar (Width)";
+            grpT.style.display = 'block';
+            lblT.textContent = "Tebal Plat (Thickness)";
+            
+        } else if (shape === 'round_bar') {
+            // As Bulat: Butuh Panjang, OD
+            grpOD.style.display = 'block';
+            
+        } else if (shape === 'square_bar') {
+            // As Kotak: Butuh Panjang, Sisi (Pakai input Width)
+            grpW.style.display = 'block';
+            lblW.textContent = "Lebar Sisi (Side)";
+            
+        } else if (shape === 'pipe') {
+            // Pipa: Butuh Panjang, OD, dan (Tebal ATAU ID)
+            grpOD.style.display = 'block';
+            grpT.style.display = 'block';
+            lblT.textContent = "Tebal Dinding (Wall Thickness)";
+            grpID.style.display = 'block';
+        }
+    }
+
+    // Jalankan saat halaman dimuat (agar input form sebelumnya tidak hilang tampilannya)
+    document.addEventListener('DOMContentLoaded', updateInputs);
+</script>
+{% endblock %}

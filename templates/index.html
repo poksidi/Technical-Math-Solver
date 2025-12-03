@@ -1,151 +1,60 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="container">
-        <div class="hero-content">
-            <h1 class="display-4 fw-bold mb-4 animate-fade-in">
-                Technical <span class="text-gradient">Math Solver</span>
-            </h1>
-            <p class="lead mb-5 fs-5 animate-fade-in" style="animation-delay: 0.2s;">
-                Aplikasi pembelajaran matematika teknik modern untuk siswa SMK. 
-                Selesaikan perhitungan teknik dengan mudah dan menyenangkan.
-            </p>
-            <div class="row justify-content-center animate-fade-in" style="animation-delay: 0.4s;">
-                <div class="col-auto">
-                    <a href="#features" class="btn btn-light btn-lg px-4 py-3 fw-semibold">
-                        <i class="fas fa-rocket me-2"></i>Mulai Jelajahi
-                    </a>
-                </div>
-                <div class="col-auto">
-                    <a href="{{ url_for('team_info') }}" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
-                        <i class="fas fa-users me-2"></i>Kenali Tim Kami
-                    </a>
-                </div>
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary">Technical Math Solver</h1>
+    <p class="lead text-muted">Asisten Perhitungan Matematika Teknik untuk SMK</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card h-100 p-3 text-center">
+            <div class="card-body">
+                <i class="fas fa-bolt fa-3x text-warning mb-3"></i>
+                <h4>Listrik Dasar</h4>
+                <p>Hukum Ohm, Daya, Resistansi.</p>
+                <a href="/electric" class="btn btn-outline-primary w-100">Buka</a>
             </div>
         </div>
     </div>
-</section>
-
-<!-- Features Section -->
-<section id="features" class="py-5" style="background: rgba(255,255,255,0.02);">
-    <div class="container">
-        <div class="row mb-5">
-            <div class="col-12 text-center">
-                <h2 class="display-5 fw-bold text-light mb-3">Fitur Utama</h2>
-                <p class="lead text-light opacity-75">Semua alat matematika teknik yang Anda butuhkan dalam satu platform</p>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="feature-card glass-card h-100 animate-slide-up">
-                    <i class="fas fa-exchange-alt"></i>
-                    <h4 class="fw-bold mb-3">Konversi Satuan</h4>
-                    <p class="text-muted mb-4">Konversi berbagai satuan panjang, massa, suhu dengan presisi tinggi</p>
-                    <a href="{{ url_for('unit_converter') }}" class="btn btn-primary w-100">
-                        <i class="fas fa-arrow-right me-2"></i>Jelajahi
-                    </a>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="feature-card glass-card h-100 animate-slide-up" style="animation-delay: 0.1s;">
-                    <i class="fas fa-bolt"></i>
-                    <h4 class="fw-bold mb-3">Kelistrikan</h4>
-                    <p class="text-muted mb-4">Perhitungan hukum Ohm, rangkaian seri-paralel, dan analisis daya</p>
-                    <a href="{{ url_for('electrical') }}" class="btn btn-warning w-100">
-                        <i class="fas fa-arrow-right me-2"></i>Jelajahi
-                    </a>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="feature-card glass-card h-100 animate-slide-up" style="animation-delay: 0.2s;">
-                    <i class="fas fa-cube"></i>
-                    <h4 class="fw-bold mb-3">Material</h4>
-                    <p class="text-muted mb-4">Analisis volume, berat material, dan perhitungan stress teknik</p>
-                    <a href="{{ url_for('materials') }}" class="btn btn-success w-100">
-                        <i class="fas fa-arrow-right me-2"></i>Jelajahi
-                    </a>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="feature-card glass-card h-100 animate-slide-up" style="animation-delay: 0.3s;">
-                    <i class="fas fa-draw-polygon"></i>
-                    <h4 class="fw-bold mb-3">Geometri Teknik</h4>
-                    <p class="text-muted mb-4">Perhitungan bentuk 2D & 3D untuk aplikasi teknik</p>
-                    <a href="{{ url_for('geometry') }}" class="btn btn-info w-100">
-                        <i class="fas fa-arrow-right me-2"></i>Jelajahi
-                    </a>
-                </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3 text-center">
+            <div class="card-body">
+                <i class="fas fa-shapes fa-3x text-success mb-3"></i>
+                <h4>Geometri Teknik</h4>
+                <p>Volume tangki, luas permukaan.</p>
+                <a href="/geometry" class="btn btn-outline-success w-100">Buka</a>
             </div>
         </div>
     </div>
-</section>
-
-<!-- Recent Calculations Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow-strong animate-slide-up">
-                    <div class="card-header">
-                        <h4 class="mb-0">
-                            <i class="fas fa-history me-2"></i>Riwayat Perhitungan Terbaru
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                        <div id="calculation-history" class="table-responsive">
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary mb-3" role="status">
-                                    <span class="visually-hidden">Memuat...</span>
-                                </div>
-                                <p class="text-muted">Memuat riwayat perhitungan...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3 text-center">
+            <div class="card-body">
+                <i class="fas fa-exchange-alt fa-3x text-info mb-3"></i>
+                <h4>Konversi Unit</h4>
+                <p>HP ke kW, Suhu, Panjang.</p>
+                <a href="/conversion" class="btn btn-outline-info w-100">Buka</a>
             </div>
         </div>
     </div>
-</section>
-
-<!-- Stats Section -->
-<section class="py-5" style="background: rgba(255,255,255,0.02);">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-3 mb-4">
-                <div class="glass-card p-4">
-                    <i class="fas fa-calculator fa-2x text-primary mb-3"></i>
-                    <h3 class="fw-bold text-light">50+</h3>
-                    <p class="text-light opacity-75 mb-0">Jenis Perhitungan</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="glass-card p-4">
-                    <i class="fas fa-bolt fa-2x text-warning mb-3"></i>
-                    <h3 class="fw-bold text-light">100%</h3>
-                    <p class="text-light opacity-75 mb-0">Akurasi Teknis</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="glass-card p-4">
-                    <i class="fas fa-rocket fa-2x text-success mb-3"></i>
-                    <h3 class="fw-bold text-light">Real-time</h3>
-                    <p class="text-light opacity-75 mb-0">Hasil Instan</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="glass-card p-4">
-                    <i class="fas fa-mobile-alt fa-2x text-info mb-3"></i>
-                    <h3 class="fw-bold text-light">Responsif</h3>
-                    <p class="text-light opacity-75 mb-0">Di Semua Device</p>
-                </div>
+    <div class="col-md-6">
+        <div class="card h-100 p-3 text-center">
+            <div class="card-body">
+                <i class="fas fa-cubes fa-3x text-secondary mb-3"></i>
+                <h4>Kalkulator Material</h4>
+                <p>Hitung berat besi, beton, kayu berdasarkan volume.</p>
+                <a href="/material" class="btn btn-outline-secondary w-100">Buka</a>
             </div>
         </div>
     </div>
-</section>
+    <div class="col-md-6">
+        <div class="card h-100 p-3 text-center bg-light border-primary">
+            <div class="card-body">
+                <i class="fas fa-cogs fa-3x text-primary mb-3"></i>
+                <h4>Rekayasa Lanjut</h4>
+                <p>Mekanika Tuas, Fluida, & Kekuatan Struktur.</p>
+                <a href="/engineering" class="btn btn-primary w-100">Buka</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

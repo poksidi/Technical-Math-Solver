@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-center mb-4"><i class="fas fa-exchange-alt text-info"></i> Konversi Universal</h2>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4 shadow-sm">
+            
+            {% if result %}
+                <div class="alert alert-info text-center fw-bold fs-5 mb-4">
+                    {{ result }}
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Pilih Kategori:</label>
+                    <select id="categorySelect" name="category" class="form-select form-select-lg bg-light" onchange="updateUnits()">
+                        <option value="" disabled selected>-- Pilih Kategori --</option>
+                        {% for cat in unit_data.keys() %}
+                            <option value="{{ cat }}" {% if s_cat == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                        <option value="Suhu" {% if s_cat == 'Suhu' %}selected{% endif %}>Suhu</option>
+                    </select>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Nilai:</label>
+                        <input type="number" step="any" name="value" class="form-control" placeholder="0" required value="{{ s_val }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Dari:</label>
+                        <select id="unitFrom" name="unit_from" class="form-select" required>
+                            </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Ke:</label>
+                        <select id="unitTo" name="unit_to" class="form-select" required>
+                            </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-info text-white fw-bold w-100 mt-4">
+                    <i class="fas fa-calculator"></i> Konversi
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ambil data unit dari Python (Jinja2) dan jadikan objek JS
+    const unitData = {{ unit_data | tojson }};
+    
+    // Tambahkan data suhu secara manual karena logika backendnya terpisah
+    unitData['Suhu'] = {
+        'Celcius (°C)': 1, 
+        'Fahrenheit (°F)': 1, 
+        'Kelvin (K)': 1, 
+        'Reamur (°R)': 1
+    };
+
+    const categorySelect = document.getElementById('categorySelect');
+    const unitFrom = document.getElementById('unitFrom');
+    const unitTo = document.getElementById('unitTo');
+
+    // Fungsi Update Dropdown
+    function updateUnits() {
+        const selectedCat = categorySelect.value;
+        
+        // Kosongkan dropdown satuan
+        unitFrom.innerHTML = '';
+        unitTo.innerHTML = '';
+
+        if (selectedCat && unitData[selectedCat]) {
+            const units = Object.keys(unitData[selectedCat]);
+            
+            units.forEach(unit => {
+                // Tambah option ke 'Dari'
+                let opt1 = document.createElement('option');
+                opt1.value = unit;
+                opt1.textContent = unit;
+                unitFrom.appendChild(opt1);
+
+                // Tambah option ke 'Ke'
+                let opt2 = document.createElement('option');
+                opt2.value = unit;
+                opt2.textContent = unit;
+                unitTo.appendChild(opt2);
+            });
+        }
+    }
+
+    // --- FITUR MEMORI (Agar pilihan tidak reset setelah submit) ---
+    // Jalankan saat halaman selesai dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        // Jika ada kategori yang dipilih sebelumnya (dari Python render)
+        if (categorySelect.value) {
+            updateUnits(); // Isi dropdown unit
+            
+            // Set kembali nilai yang dipilih user
+            const prevFrom = "{{ s_from }}";
+            const prevTo = "{{ s_to }}";
+            
+            if(prevFrom) unitFrom.value = prevFrom;
+            if(prevTo) unitTo.value = prevTo;
+        }
+    });
+</script>
+{% endblock %}
