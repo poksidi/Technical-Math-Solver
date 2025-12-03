@@ -3,78 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technical Math Studio</title>
+    <title>Technical Math Solver</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
 </head>
 <body>
 
-    <div id="wrapper">
-        <div id="sidebar-wrapper">
-            <div class="sidebar-heading">
-                <i class="fas fa-drafting-compass me-2"></i> TEKNIK 12
-            </div>
-            <div class="list-group list-group-flush mt-3">
-                <a href="/" class="list-group-item list-group-item-action {% if request.path == '/' %}active-nav{% endif %}">
-                    <i class="fas fa-home"></i> Dashboard
-                </a>
-                <a href="/electric" class="list-group-item list-group-item-action {% if request.path == '/electric' %}active-nav{% endif %}">
-                    <i class="fas fa-bolt"></i> Listrik
-                </a>
-                <a href="/geometry" class="list-group-item list-group-item-action {% if request.path == '/geometry' %}active-nav{% endif %}">
-                    <i class="fas fa-shapes"></i> Geometri
-                </a>
-                <a href="/conversion" class="list-group-item list-group-item-action {% if request.path == '/conversion' %}active-nav{% endif %}">
-                    <i class="fas fa-exchange-alt"></i> Konversi
-                </a>
-                <a href="/material" class="list-group-item list-group-item-action {% if request.path == '/material' %}active-nav{% endif %}">
-                    <i class="fas fa-weight-hanging"></i> Material
-                </a>
-                <a href="/engineering" class="list-group-item list-group-item-action {% if request.path == '/engineering' %}active-nav{% endif %}">
-                    <i class="fas fa-cogs"></i> Rekayasa Lanjut
-                </a>
-            </div>
-            
-            <div class="mt-auto p-3 text-center" style="position: absolute; bottom: 0; width: 100%;">
-                <small style="opacity: 0.6; font-size: 10px;">Ver 1.0 - Kelompok 12</small>
-            </div>
-        </div>
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container-fluid container-fluid-custom py-0">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-drafting-compass me-2"></i>TECHNICAL MATH SOLVER
+            </a>
 
-        <div id="page-content-wrapper">
-            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-4 rounded-3">
-                <div class="container-fluid">
-                    <button class="btn btn-light" id="menu-toggle"><i class="fas fa-bars"></i></button>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active-nav{% endif %}" href="/">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/electric' %}active-nav{% endif %}" href="/electric">Listrik</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/geometry' %}active-nav{% endif %}" href="/geometry">Geometri</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/conversion' %}active-nav{% endif %}" href="/conversion">Konversi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/material' %}active-nav{% endif %}" href="/material">Material</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/engineering' %}active-nav{% endif %}" href="/engineering">Engineering Studio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/engineering' %}active-nav{% endif %}" href="/engineering">Rekayasa</a>
+                    </li>
                     
-                    <span class="ms-auto fw-bold text-secondary">
-                        <i class="fas fa-user-circle me-1"></i> Admin Teknik
-                    </span>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/team' %}active-nav{% endif %}" href="/team">
+                            <i class="fas fa-users me-1"></i> Tim Kami
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary fw-bold small me-2 d-none d-lg-block">Kelompok 12</span>
+                    <div class="bg-light rounded-circle text-primary d-flex align-items-center justify-content-center border" style="width: 40px; height: 40px;">
+                        <i class="fas fa-user"></i>
+                    </div>
                 </div>
-            </nav>
-
-            <div class="container-fluid">
-                {% block content %}{% endblock %}
             </div>
         </div>
+    </nav>
+
+    <div class="container-fluid-custom w-100">
+        {% block content %}{% endblock %}
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Toggle Sidebar Script
-        var el = document.getElementById("wrapper");
-        var toggleButton = document.getElementById("menu-toggle");
+    <footer class="main-footer">
+        <div class="container px-4">
+            <div class="row align-items-center">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="footer-title">Kelompok 12 - TEKNIK</h5>
+                    <p class="mb-2 text-white-50 small">Aplikasi Perhitungan & Gambar Teknik</p>
+                    <ul class="footer-list">
+                        <li><i class="fas fa-star me-2"></i> Tedy Bali Ragila (24-071)</li>
+                        <li><i class="fas fa-star me-2"></i> Ahmad Maulana Kafiyahya (24-128)</li>
+                        <li><i class="fas fa-star me-2"></i> Anindya Fausta Adhidaiva Cetta (24-041)</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-center mb-4 mb-md-0">
+                            <div class="qr-box">
+                                <img src="{{ url_for('static', filename='images/qr-code.png') }}" 
+                                     alt="QR Identitas Tim" width="100" height="100">
+                            </div>
+                            <div class="mt-2 small text-white-50">
+                                <i class="fas fa-qrcode me-1"></i> Scan info tim
+                            </div>
+                        </div>
+                <div class="col-md-4 text-md-end">
+                    <h5 class="footer-title text-end">Tentang</h5>
+                    <p class="small text-white-50 mb-0">© 2025 Pendidikan Matematika</p>
+                    <p class="small text-white-50">FKIP Universitas Jember</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                Built with <i class="fas fa-heart text-danger mx-1"></i> for better technical education
+            </div>
+        </div>
+    </footer>
 
-        toggleButton.onclick = function () {
-            el.classList.toggle("toggled");
-            // Logic CSS tambahan jika ingin responsive total (opsional)
-            var sidebar = document.getElementById("sidebar-wrapper");
-            if (sidebar.style.marginLeft === "-250px") {
-                sidebar.style.marginLeft = "0";
-            } else {
-                sidebar.style.marginLeft = "-250px";
-            }
-        };
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

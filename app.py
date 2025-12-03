@@ -8,9 +8,19 @@ app.secret_key = 'teknik_jaya_123'
 
 # --- 2. DATA REFERENSI ---
 
+# --- UPDATE DATA REFERENSI (LENGKAP) ---
 TEAM_INFO = {
-    "name": "TEKNIK - Group 12",
-    "members": ["Tedy Bali Ragila", "Ahmad Maulana Kafiyahya", "Anindya Fausta Adhidaiva Cetta"]
+    "nama_kelompok": "TEKNIK",
+    "divisi": "SMK",
+    "aplikasi": "Technical Math Solver",
+    "deskripsi": "Aplikasi Edutainment Matematika Teknik",
+    "institusi": "Pendidikan Matematika, FKIP, Universitas Jember",
+    "repository": "https://github.com/poksidi/Technical-Math-Solver",
+    "anggota": [
+        {"nama": "Tedy Bali Ragila", "nim": "24-071", "role": "Full Stack Developer, Math & Technical Content, & Project Manager", "color": "primary"},
+        {"nama": "Ahmad Maulana Kafiyahya", "nim": "24-128", "role": "Frontend Developer & Technical Dev", "color": "danger"},
+        {"nama": "Anindya Fausta Adhidaiva Cetta", "nim": "24-041", "role": "Mathematical Content", "color": "info"}
+    ]
 }
 
 # --- DATA MATERIAL LENGKAP (Density dalam kg/m³) ---
@@ -97,10 +107,13 @@ UNIT_DATA = {
 }
 
 # --- 3. ROUTES (HALAMAN) ---
-
 @app.route('/')
 def home():
     return render_template('index.html', team=TEAM_INFO)
+
+@app.route('/team')
+def team_page():
+    return render_template('team.html', team=TEAM_INFO)
 
 # --- FITUR LISTRIK (DINAMIS: KATEGORI -> RUMUS) ---
 @app.route('/electric', methods=['GET', 'POST'])

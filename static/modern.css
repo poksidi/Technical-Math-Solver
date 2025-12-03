@@ -1,122 +1,159 @@
-/* IMPORT FONT KEREN */
+/* IMPORT FONT */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root {
-    --primary-color: #4e73df;
-    --secondary-color: #858796;
-    --sidebar-width: 250px;
-    --bg-light: #f3f4f6;
-    --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    --primary-gradient: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    --bg-light: #f8f9fa;
+    --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
 }
 
 body {
     font-family: 'Poppins', sans-serif;
     background-color: var(--bg-light);
-    overflow-x: hidden;
-}
-
-/* SIDEBAR STYLE */
-#wrapper {
     display: flex;
-    width: 100%;
-    align-items: stretch;
+    flex-direction: column;
+    min-height: 100vh; /* Agar footer selalu di bawah */
 }
 
-#sidebar-wrapper {
-    min-height: 100vh;
-    width: var(--sidebar-width);
-    margin-left: 0;
-    background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
-    color: white;
-    transition: margin .25s ease-out;
-    position: fixed;
-    z-index: 1000;
+/* --- MODERN NAVBAR STYLE --- */
+.navbar-custom {
+    background: white;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    padding: 0.8rem 1rem;
 }
 
-.sidebar-heading {
-    padding: 1.5rem 1.25rem;
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-align: center;
-    letter-spacing: 1px;
-    background: rgba(0, 0, 0, 0.1);
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #4e73df !important;
+    letter-spacing: 0.5px;
 }
 
-.list-group-item {
-    background-color: transparent;
-    color: rgba(255,255,255,0.8);
-    border: none;
-    padding: 1rem 1.5rem;
-    font-size: 0.9rem;
-    transition: 0.3s;
+.nav-link {
+    color: #555 !important;
+    font-weight: 500;
+    margin: 0 5px;
+    padding: 8px 15px !important;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-.list-group-item:hover, .list-group-item.active-nav {
-    background-color: rgba(255,255,255,0.2);
-    color: #fff;
-    font-weight: 600;
-    border-left: 4px solid #fff;
+.nav-link:hover {
+    color: #4e73df !important;
+    background-color: rgba(78, 115, 223, 0.1);
 }
 
-.list-group-item i {
-    width: 25px;
+.nav-link.active-nav {
+    background: var(--primary-gradient);
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
 }
 
-/* CONTENT WRAPPER */
-#page-content-wrapper {
-    width: 100%;
-    margin-left: var(--sidebar-width);
-    padding: 20px;
+/* --- CARD & CONTENT --- */
+.container-fluid-custom {
+    max-width: 1400px; /* Batasi lebar agar tidak terlalu melar di layar besar */
+    margin: 0 auto;
+    padding: 2rem;
+    flex: 1; /* Isi ruang kosong agar footer terdorong ke bawah */
 }
 
-/* MODERN CARDS */
 .card {
     border: none;
-    border-radius: 15px;
+    border-radius: 12px;
     box-shadow: var(--card-shadow);
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
     background: white;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.1);
 }
 
-.card-header {
-    background-color: white;
-    border-bottom: 1px solid #e3e6f0;
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-/* FORM ELEMENTS */
+/* Form Elements */
 .form-control, .form-select {
-    border-radius: 10px;
-    padding: 12px;
-    border: 1px solid #d1d3e2;
-    background-color: #fcfcfc;
+    border-radius: 8px;
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
 }
-
 .form-control:focus, .form-select:focus {
-    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
-    border-color: #bac8f3;
+    border-color: #4e73df;
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.15);
 }
 
 .btn {
-    border-radius: 10px;
-    padding: 10px 20px;
+    border-radius: 8px;
+    padding: 8px 20px;
     font-weight: 600;
-    letter-spacing: 0.5px;
 }
 
-.btn-primary {
-    background-color: #4e73df;
-    border-color: #4e73df;
+/* --- FOOTER STYLE (RAPID & TERPISAH) --- */
+.main-footer {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* Warna Biru Elegan */
+    color: white;
+    padding-top: 4rem;    /* Ruang dalam atas diperlega */
+    padding-bottom: 2rem; /* Ruang dalam bawah diperlega */
+    
+    /* KUNCI PERBAIKAN: */
+    margin-top: 5rem;     /* Memberi jarak jauh dari tombol/konten di atasnya */
+    box-shadow: 0 -10px 25px rgba(0,0,0,0.1); /* Bayangan halus di bagian atas footer */
+    border-top: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    z-index: 10;
 }
 
-/* UTILITY */
-.text-gradient {
-    background: -webkit-linear-gradient(#4e73df, #224abe);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.footer-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #ffd700; /* Ganti jadi Kuning Emas agar kontras dengan biru */
+    margin-bottom: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
+
+.footer-list {
+    list-style: none;
+    padding: 0;
+    font-size: 0.95rem; /* Font sedikit dibesarkan agar terbaca */
+}
+
+.footer-list li {
+    margin-bottom: 0.8rem; /* Jarak antar nama diperlega */
+    display: flex;
+    align-items: center;
+}
+
+.footer-list i {
+    width: 25px;
+    color: #f6c23e; /* Ikon Bintang Kuning */
+}
+
+/* Kotak QR Code dipercantik */
+.qr-box {
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    display: inline-block;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3); /* Bayangan lebih kuat (pop-up effect) */
+    transition: transform 0.3s;
+    margin-bottom: 10px;
+}
+
+.qr-box:hover {
+    transform: translateY(-5px); /* Efek melayang saat di-hover */
+}
+
+.footer-bottom {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.8);
+    text-align: center;
+    font-weight: 300;
+}
+.footer-title { font-weight: 700; color: #89cff0; margin-bottom: 1rem; }
+.footer-list { list-style: none; padding: 0; }
+.footer-list li { margin-bottom: 0.5rem; }
+.qr-box { background: white; padding: 10px; border-radius: 10px; display: inline-block; }
+.footer-bottom { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 0.8rem; }
