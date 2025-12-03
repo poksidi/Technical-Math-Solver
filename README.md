@@ -112,21 +112,21 @@ technical_math_solver/
     ├── material.html     # Modul Material
     ├── engineering.html  # Modul Rekayasa (Tabbed Interface)
     └── team.html         # Halaman Profil Tim
-
+```
+---
 ## 👥 Tim Pengembang (Kelompok 12)
 Proyek ini dikembangkan oleh mahasiswa Pendidikan Matematika, FKIP, Universitas Jember:
 
-1. Tedy Bali Ragila (NIM: 24-071)
-⭐ Full Stack Developer, Math & Technical Content, Project Manager
+1. **Tedy Bali Ragila (NIM: 24-071)**
+   ⭐ Full Stack Developer, Math & Technical Content, Project Manager
 
-2. Ahmad Maulana Kafiyahya (NIM: 24-128)
-⭐ Frontend Developer & Technical Developer
+2. **Ahmad Maulana Kafiyahya (NIM: 24-128)**
+   ⭐ Frontend Developer & Technical Developer
 
-3. Anindya Fausta Adhidaiva Cetta (NIM: 24-041)
-⭐ Mathematical Content Specialist
+3. **Anindya Fausta Adhidaiva Cetta (NIM: 24-041)**
+   ⭐ Mathematical Content Specialist
 
 ## 📝 Lisensi
 Project ini dibuat untuk tujuan pendidikan. Silakan digunakan dan dikembangkan lebih lanjut.
-
 
 Built with ❤️ for better technical education.
